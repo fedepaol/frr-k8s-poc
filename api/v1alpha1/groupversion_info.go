@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 */
 
-// Package v1 contains API Schema definitions for the k8sfrr v1 API group
+// Package v1alpha1 contains API Schema definitions for the k8sfrr v1alpha1 API group
 // +kubebuilder:object:generate=true
 // +groupName=k8sfrr.frr.metallb.io
-package v1
+package v1alpha1
 
 import (
 	"k8s.io/apimachinery/pkg/runtime/schema"

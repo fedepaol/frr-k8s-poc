@@ -24,32 +24,42 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	k8sfrrv1 "github.com/metallb/frrk8s/api/v1"
+	k8sfrrv1alpha1 "github.com/metallb/frrk8s/api/v1alpha1"
+	"github.com/metallb/frrk8s/internal/frr"
 )
 
 // FRRConfigurationReconciler reconciles a FRRConfiguration object
 type FRRConfigurationReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
+	FRR    *frr.FRR
 }
 
 //+kubebuilder:rbac:groups=k8sfrr.frr.metallb.io,resources=frrconfigurations,verbs=get;list;watch;create;update;patch;delete
 //+kubebuilder:rbac:groups=k8sfrr.frr.metallb.io,resources=frrconfigurations/status,verbs=get;update;patch
 //+kubebuilder:rbac:groups=k8sfrr.frr.metallb.io,resources=frrconfigurations/finalizers,verbs=update
 
-// Reconcile is part of the main kubernetes reconciliation loop which aims to
-// move the current state of the cluster closer to the desired state.
-// TODO(user): Modify the Reconcile function to compare the state specified by
-// the FRRConfiguration object against the actual cluster state, and then
-// perform operations to make the cluster state reflect the state specified by
-// the user.
-//
-// For more details, check Reconcile and its Result here:
-// - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.14.4/pkg/reconcile
 func (r *FRRConfigurationReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	_ = log.FromContext(ctx)
-
-	// TODO(user): your logic here
+	logger := log.FromContext(ctx)
+	configs := &k8sfrrv1alpha1.FRRConfigurationList{}
+	err := r.Client.List(ctx, configs)
+	if err != nil {
+		return ctrl.Result{}, err
+	}
+	if len(configs.Items) == 0 {
+		// TODO delete config
+	}
+	// TODO Implement merge
+	if len(configs.Items) > 1 {
+		logger.Info("More than one FRRConfiguration found, only one is supported")
+		return ctrl.Result{}, nil
+	}
+	for _, config := range configs.Items {
+		err = r.FRR.ApplyConfig(config)
+		if err != nil {
+			return ctrl.Result{}, err
+		}
+	}
 
 	return ctrl.Result{}, nil
 }
@@ -57,6 +67,6 @@ func (r *FRRConfigurationReconciler) Reconcile(ctx context.Context, req ctrl.Req
 // SetupWithManager sets up the controller with the Manager.
 func (r *FRRConfigurationReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&k8sfrrv1.FRRConfiguration{}).
+		For(&k8sfrrv1alpha1.FRRConfiguration{}).
 		Complete(r)
 }

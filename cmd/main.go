@@ -31,8 +31,10 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	k8sfrrv1 "github.com/metallb/frrk8s/api/v1"
+	k8sfrrv1alpha1 "github.com/metallb/frrk8s/api/v1alpha1"
 	"github.com/metallb/frrk8s/internal/controller"
+	"github.com/metallb/frrk8s/internal/frr"
+	"github.com/metallb/frrk8s/internal/logging"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -44,7 +46,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(k8sfrrv1.AddToScheme(scheme))
+	utilruntime.Must(k8sfrrv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -63,7 +65,8 @@ func main() {
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
-	ctrl.SetLogger(zap.New(zap.UseFlagOptions(&opts)))
+	logger := zap.New(zap.UseFlagOptions(&opts))
+	ctrl.SetLogger(logger)
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
@@ -89,9 +92,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	ctx := ctrl.SetupSignalHandler()
 	if err = (&controller.FRRConfigurationReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
+		FRR:    frr.NewFRR(ctx, logging.LevelInfo),
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "FRRConfiguration")
 		os.Exit(1)
@@ -108,7 +113,7 @@ func main() {
 	}
 
 	setupLog.Info("starting manager")
-	if err := mgr.Start(ctrl.SetupSignalHandler()); err != nil {
+	if err := mgr.Start(ctx); err != nil {
 		setupLog.Error(err, "problem running manager")
 		os.Exit(1)
 	}
