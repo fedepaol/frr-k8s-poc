@@ -42,7 +42,6 @@ spec:
       - command:
         - /manager
         args:
-        - --leader-elect
         image: controller:latest
         imagePullPolicy: IfNotPresent
         name: manager
@@ -50,7 +49,8 @@ spec:
           allowPrivilegeEscalation: false
           capabilities:
             drop:
-              - "ALL"
+              - ALL
+          readOnlyRootFilesystem: true
         livenessProbe:
           httpGet:
             path: /healthz
@@ -72,6 +72,14 @@ spec:
           requests:
             cpu: 10m
             memory: 64Mi
+        volumeMounts:
+        - name: reloader
+          mountPath: /etc/frr_reloader 
+        env:
+        - name: FRR_CONFIG_FILE
+          value: /etc/frr_reloader/frr.conf
+        - name: FRR_RELOADER_PID_FILE
+          value: /etc/frr_reloader/reloader.pid
       - name: frr
         securityContext:
           capabilities:
@@ -176,4 +184,8 @@ spec:
               mountPath: /etc/frr_metrics
       serviceAccountName: controller-manager
       terminationGracePeriodSeconds: 10
+      shareProcessNamespace: true
+      hostNetwork: true
+
+
 

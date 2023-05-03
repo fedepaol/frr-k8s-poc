@@ -33,6 +33,4 @@ COPY --from=builder /workspace/manager .
 COPY --from=builder /build/frr-metrics /frr-metrics
 COPY frr-tools/reloader/frr-reloader.sh /frr-reloader.sh
 
-USER 65532:65532
-
 ENTRYPOINT ["/manager"]
