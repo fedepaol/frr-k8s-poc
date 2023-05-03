@@ -24,7 +24,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
-	k8sfrrv1alpha1 "github.com/metallb/frrk8s/api/v1alpha1"
+	frrk8sv1alpha1 "github.com/metallb/frrk8s/api/v1alpha1"
 	"github.com/metallb/frrk8s/internal/frr"
 )
 
@@ -35,13 +35,13 @@ type FRRConfigurationReconciler struct {
 	FRR    *frr.FRR
 }
 
-//+kubebuilder:rbac:groups=k8sfrr.frr.metallb.io,resources=frrconfigurations,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=k8sfrr.frr.metallb.io,resources=frrconfigurations/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=k8sfrr.frr.metallb.io,resources=frrconfigurations/finalizers,verbs=update
+//+kubebuilder:rbac:groups=frrk8s.metallb.io,resources=frrconfigurations,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=frrk8s.metallb.io,resources=frrconfigurations/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=frrk8s.metallb.io,resources=frrconfigurations/finalizers,verbs=update
 
 func (r *FRRConfigurationReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	logger := log.FromContext(ctx)
-	configs := &k8sfrrv1alpha1.FRRConfigurationList{}
+	configs := &frrk8sv1alpha1.FRRConfigurationList{}
 	err := r.Client.List(ctx, configs)
 	if err != nil {
 		return ctrl.Result{}, err
@@ -67,6 +67,6 @@ func (r *FRRConfigurationReconciler) Reconcile(ctx context.Context, req ctrl.Req
 // SetupWithManager sets up the controller with the Manager.
 func (r *FRRConfigurationReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&k8sfrrv1alpha1.FRRConfiguration{}).
+		For(&frrk8sv1alpha1.FRRConfiguration{}).
 		Complete(r)
 }

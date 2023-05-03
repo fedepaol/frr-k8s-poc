@@ -19,7 +19,7 @@ FRR_IP=$(docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{e
 
 
 cat <<EOF | kubectl apply -f -
-apiVersion: k8sfrr.frr.metallb.io/v1alpha1
+apiVersion: frrk8s.metallb.io/v1alpha1
 kind: FRRConfiguration
 metadata:
   name: frrconfiguration-sample

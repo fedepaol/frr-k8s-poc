@@ -31,7 +31,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 
-	k8sfrrv1alpha1 "github.com/metallb/frrk8s/api/v1alpha1"
+	frrk8sv1alpha1 "github.com/metallb/frrk8s/api/v1alpha1"
 	"github.com/metallb/frrk8s/internal/controller"
 	"github.com/metallb/frrk8s/internal/frr"
 	"github.com/metallb/frrk8s/internal/logging"
@@ -46,7 +46,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
-	utilruntime.Must(k8sfrrv1alpha1.AddToScheme(scheme))
+	utilruntime.Must(frrk8sv1alpha1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 

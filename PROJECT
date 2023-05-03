@@ -9,7 +9,7 @@ projectName: frr-k8s
 repo: github.com/metallb/frrk8s
 resources:
 - api:
-    crdVersion: v1
+    crdVersion: v1alpha1
     namespaced: true
   controller: true
   domain: frr.metallb.io

@@ -3,17 +3,17 @@ kind: ClusterRoleBinding
 metadata:
   labels:
     app.kubernetes.io/name: clusterrolebinding
-    app.kubernetes.io/instance: manager-rolebinding
+    app.kubernetes.io/instance: frr-k8s-rolebinding
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: frr-k8s
     app.kubernetes.io/part-of: frr-k8s
     app.kubernetes.io/managed-by: kustomize
-  name: manager-rolebinding
+  name: daemon-rolebinding
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: manager-role
+  name: daemon-role
 subjects:
 - kind: ServiceAccount
-  name: controller-manager
+  name: daemon
   namespace: system

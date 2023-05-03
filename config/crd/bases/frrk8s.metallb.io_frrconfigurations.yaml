@@ -5,9 +5,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.11.3
   creationTimestamp: null
-  name: frrconfigurations.k8sfrr.frr.metallb.io
+  name: frrconfigurations.frrk8s.metallb.io
 spec:
-  group: k8sfrr.frr.metallb.io
+  group: frrk8s.metallb.io
   names:
     kind: FRRConfiguration
     listKind: FRRConfigurationList
