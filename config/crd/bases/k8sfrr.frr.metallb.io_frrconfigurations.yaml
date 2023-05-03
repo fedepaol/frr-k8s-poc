@@ -60,9 +60,6 @@ spec:
                                 items:
                                   type: string
                                 type: array
-                            required:
-                            - allowAll
-                            - prefixes
                             type: object
                           asn:
                             format: int32
@@ -75,8 +72,6 @@ spec:
                         - address
                         - allowedOutPrefixes
                         - asn
-                        - passwd
-                        - port
                         type: object
                       type: array
                     prefixesV4:
@@ -91,15 +86,9 @@ spec:
                       type: string
                   required:
                   - asn
-                  - id
-                  - neighbors
-                  - prefixesV4
-                  - prefixesV6
-                  - vrf
                   type: object
                 type: array
             required:
-            - logLevel
             - routers
             type: object
           status:

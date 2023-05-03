@@ -23,24 +23,24 @@ import (
 // FRRConfigurationSpec defines the desired state of FRRConfiguration
 type FRRConfigurationSpec struct {
 	Routers  []Router `json:"routers"`
-	LogLevel string   `json:"logLevel"`
+	LogLevel string   `json:"logLevel,omitempty"`
 }
 
 // Router represent a neighbor router we want FRR to connect to
 type Router struct {
 	ASN        uint32     `json:"asn"`
-	ID         string     `json:"id"`
-	VRF        string     `json:"vrf"`
-	Neighbors  []Neighbor `json:"neighbors"`
-	PrefixesV4 []string   `json:"prefixesV4"`
-	PrefixesV6 []string   `json:"prefixesV6"`
+	ID         string     `json:"id,omitempty"`
+	VRF        string     `json:"vrf,omitempty"`
+	Neighbors  []Neighbor `json:"neighbors,omitempty"`
+	PrefixesV4 []string   `json:"prefixesV4,omitempty"`
+	PrefixesV6 []string   `json:"prefixesV6,omitempty"`
 }
 
 type Neighbor struct {
 	ASN                uint32          `json:"asn"`
 	Address            string          `json:"address"`
-	Port               uint16          `json:"port"`
-	Password           string          `json:"passwd"`
+	Port               uint16          `json:"port,omitempty"`
+	Password           string          `json:"passwd,omitempty"`
 	AllowedOutPrefixes AllowedPrefixes `json:"allowedOutPrefixes"`
 	// TODO all the other parameters defined in the neighbor config
 	// AllowedInPrefixes     AllowedPrefixes
@@ -49,8 +49,8 @@ type Neighbor struct {
 }
 
 type AllowedPrefixes struct {
-	Prefixes []string `json:"prefixes"`
-	AllowAll bool     `json:"allowAll"`
+	Prefixes []string `json:"prefixes,omitempty"`
+	AllowAll bool     `json:"allowAll,omitempty"`
 }
 
 /*
