@@ -25,6 +25,12 @@ func routerToFRRConfig(r v1alpha1.Router) (*routerConfig, error) {
 		}
 		res.Neighbors = append(res.Neighbors, frrNeigh)
 	}
+	for _, p := range r.PrefixesV4 {
+		res.IPV4Prefixes = append(res.IPV4Prefixes, p)
+	}
+	for _, p := range r.PrefixesV6 {
+		res.IPV6Prefixes = append(res.IPV6Prefixes, p)
+	}
 	return res, nil
 }
 
