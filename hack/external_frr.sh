@@ -1,7 +1,7 @@
 #!/bin/bash
 set -x
 
-NODES=$(kubectl get nodes -o jsonpath={.items[*].status.addresses[?\(@.type==\"InternalIP\"\)].address})
+NODES=$(kubectl get nodes -l node-role.kubernetes.io/worker=worker -o jsonpath={.items[*].status.addresses[?\(@.type==\"InternalIP\"\)].address})
 echo $NODES
 pushd ./hack/frr/
 go run . -nodes "$NODES"

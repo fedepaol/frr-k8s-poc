@@ -18,3 +18,5 @@ nodes:
 - role: worker
 EOF
 
+kubectl label node kind-worker kind-worker2 node-role.kubernetes.io/worker=worker
+
