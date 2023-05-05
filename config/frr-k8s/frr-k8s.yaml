@@ -41,7 +41,7 @@ spec:
       containers:
       - command:
         - /frr-k8s
-        args:
+        args: ["--node-name", "${DOLLAR}(NODE_NAME)"]
         image: controller:latest
         imagePullPolicy: IfNotPresent
         name: frr-k8s
@@ -80,6 +80,10 @@ spec:
           value: /etc/frr_reloader/frr.conf
         - name: FRR_RELOADER_PID_FILE
           value: /etc/frr_reloader/reloader.pid
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
       - name: frr
         securityContext:
           capabilities:

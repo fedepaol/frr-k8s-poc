@@ -24,6 +24,7 @@ import (
 type FRRConfigurationSpec struct {
 	Routers  []Router `json:"routers"`
 	LogLevel string   `json:"logLevel,omitempty"`
+	NodeName string   `json:"nodeName,omitempty"` // TODO replace with node selector
 }
 
 // Router represent a neighbor router we want FRR to connect to

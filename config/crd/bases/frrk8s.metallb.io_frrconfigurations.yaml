@@ -37,6 +37,8 @@ spec:
             properties:
               logLevel:
                 type: string
+              nodeName:
+                type: string
               routers:
                 items:
                   description: Router represent a neighbor router we want FRR to connect

@@ -22,7 +22,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	frrk8sv1alpha1 "github.com/metallb/frrk8s/api/v1alpha1"
 	"github.com/metallb/frrk8s/internal/frr"
@@ -31,8 +30,9 @@ import (
 // FRRConfigurationReconciler reconciles a FRRConfiguration object
 type FRRConfigurationReconciler struct {
 	client.Client
-	Scheme *runtime.Scheme
-	FRR    *frr.FRR
+	Scheme   *runtime.Scheme
+	FRR      *frr.FRR
+	NodeName string
 }
 
 //+kubebuilder:rbac:groups=frrk8s.metallb.io,resources=frrconfigurations,verbs=get;list;watch;create;update;patch;delete
@@ -40,7 +40,7 @@ type FRRConfigurationReconciler struct {
 //+kubebuilder:rbac:groups=frrk8s.metallb.io,resources=frrconfigurations/finalizers,verbs=update
 
 func (r *FRRConfigurationReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
-	logger := log.FromContext(ctx)
+	//	logger := log.FromContext(ctx)
 	configs := &frrk8sv1alpha1.FRRConfigurationList{}
 	err := r.Client.List(ctx, configs)
 	if err != nil {
@@ -49,12 +49,12 @@ func (r *FRRConfigurationReconciler) Reconcile(ctx context.Context, req ctrl.Req
 	if len(configs.Items) == 0 {
 		// TODO delete config
 	}
-	// TODO Implement merge
-	if len(configs.Items) > 1 {
-		logger.Info("More than one FRRConfiguration found, only one is supported")
-		return ctrl.Result{}, nil
-	}
+
 	for _, config := range configs.Items {
+		// TODO node selector
+		if config.Spec.NodeName != "" && config.Spec.NodeName != r.NodeName {
+			continue
+		}
 		err = r.FRR.ApplyConfig(config)
 		if err != nil {
 			return ctrl.Result{}, err

@@ -51,10 +51,15 @@ func init() {
 }
 
 func main() {
-	var metricsAddr string
-	var probeAddr string
+	var (
+		metricsAddr string
+		probeAddr   string
+		nodeName    string
+	)
+
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
+	flag.StringVar(&nodeName, "node-name", "", "The node this daemon is running on.")
 
 	opts := zap.Options{
 		Development: true,
@@ -64,6 +69,11 @@ func main() {
 
 	logger := zap.New(zap.UseFlagOptions(&opts))
 	ctrl.SetLogger(logger)
+
+	if nodeName == "" {
+		setupLog.Error(nil, "node-name must be set")
+		os.Exit(1)
+	}
 
 	mgr, err := ctrl.NewManager(ctrl.GetConfigOrDie(), ctrl.Options{
 		Scheme:                 scheme,
@@ -78,9 +88,10 @@ func main() {
 
 	ctx := ctrl.SetupSignalHandler()
 	if err = (&controller.FRRConfigurationReconciler{
-		Client: mgr.GetClient(),
-		Scheme: mgr.GetScheme(),
-		FRR:    frr.NewFRR(ctx, logging.LevelInfo),
+		Client:   mgr.GetClient(),
+		Scheme:   mgr.GetScheme(),
+		FRR:      frr.NewFRR(ctx, logging.LevelInfo),
+		NodeName: nodeName,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "FRRConfiguration")
 		os.Exit(1)
