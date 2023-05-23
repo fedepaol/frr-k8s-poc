@@ -125,6 +125,10 @@ func testFileIsValid(fileName string) error {
 }
 
 func TestDockerFRRFails(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping FRR integration")
+	}
+
 	badFile := filepath.Join(testData, "TestDockerTestfails.golden")
 	err := testFileIsValid(badFile)
 	if !errors.As(err, &invalidFileErr{}) {

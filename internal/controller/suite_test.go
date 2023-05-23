@@ -42,6 +42,9 @@ var k8sClient client.Client
 var testEnv *envtest.Environment
 
 func TestAPIs(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping test in short mode.")
+	}
 	RegisterFailHandler(Fail)
 
 	RunSpecs(t, "Controller Suite")

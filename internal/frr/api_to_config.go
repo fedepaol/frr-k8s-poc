@@ -47,6 +47,7 @@ func neighborToFRR(n v1alpha1.Neighbor) (*neighborConfig, error) {
 		Password:       n.Password,
 		Advertisements: make([]*advertisementConfig, 0),
 		IPFamily:       neighborFamily,
+		EBGPMultiHop:   n.EBGPMultiHop,
 	}
 	// TODO allow all
 	for _, p := range n.AllowedOutPrefixes.Prefixes {

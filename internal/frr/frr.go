@@ -51,7 +51,7 @@ func (f *FRR) ApplyConfig(k8sConfig v1alpha1.FRRConfiguration) error {
 		config.Routers = append(config.Routers, routerConfig)
 	}
 
-	config.Loglevel = k8sConfig.Spec.LogLevel
+	config.Loglevel = f.logLevel
 	f.reloadConfig <- reloadEvent{config: config}
 	return nil
 }
@@ -67,6 +67,7 @@ func NewFRR(ctx context.Context, logLevel logging.Level) *FRR {
 		reloadConfig: make(chan reloadEvent),
 		logLevel:     logLevelToFRR(logLevel),
 	}
+	fmt.Println("FEDE loglevel", res.logLevel)
 	reload := func(config *frrConfig) error {
 		return generateAndReloadConfigFile(config, logger)
 	}
