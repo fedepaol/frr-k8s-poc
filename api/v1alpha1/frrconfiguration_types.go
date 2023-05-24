@@ -41,8 +41,9 @@ type Neighbor struct {
 	ASN                uint32          `json:"asn"`
 	Address            string          `json:"address"`
 	Port               uint16          `json:"port,omitempty"`
-	Password           string          `json:"passwd,omitempty"`
+	Password           string          `json:"passwd,omitempty"` // TODO make a secret reference
 	AllowedOutPrefixes AllowedPrefixes `json:"allowedOutPrefixes"`
+	EBGPMultiHop       bool            `json:"ebgpMultiHop,omitempty"`
 	// TODO all the other parameters defined in the neighbor config
 	// AllowedInPrefixes     AllowedPrefixes
 	// PrefixesWithLocalPref []LocalPrefPrefixes

@@ -18,6 +18,7 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 
 	// Import all Kubernetes client auth plugins (e.g. Azure, GCP, OIDC, etc.)
@@ -55,11 +56,13 @@ func main() {
 		metricsAddr string
 		probeAddr   string
 		nodeName    string
+		logLevel    string
 	)
 
 	flag.StringVar(&metricsAddr, "metrics-bind-address", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&probeAddr, "health-probe-bind-address", ":8081", "The address the probe endpoint binds to.")
 	flag.StringVar(&nodeName, "node-name", "", "The node this daemon is running on.")
+	flag.StringVar(&logLevel, "log-level", "info", fmt.Sprintf("log level. must be one of: [%s]", logging.Levels.String()))
 
 	opts := zap.Options{
 		Development: true,
@@ -67,8 +70,13 @@ func main() {
 	opts.BindFlags(flag.CommandLine)
 	flag.Parse()
 
-	logger := zap.New(zap.UseFlagOptions(&opts))
-	ctrl.SetLogger(logger)
+	logger, err := logging.Init(logLevel)
+	if err != nil {
+		fmt.Printf("failed to initialize logging: %s\n", err)
+		os.Exit(1)
+	}
+
+	// ctrl.SetLogger(logger)
 
 	if nodeName == "" {
 		setupLog.Error(nil, "node-name must be set")
@@ -90,7 +98,7 @@ func main() {
 	if err = (&controller.FRRConfigurationReconciler{
 		Client:   mgr.GetClient(),
 		Scheme:   mgr.GetScheme(),
-		FRR:      frr.NewFRR(ctx, logging.LevelInfo),
+		FRR:      frr.NewFRR(ctx, logging.Level(logLevel)),
 		NodeName: nodeName,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "FRRConfiguration")

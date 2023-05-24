@@ -74,7 +74,7 @@ spec:
             memory: 64Mi
         volumeMounts:
         - name: reloader
-          mountPath: /etc/frr_reloader 
+          mountPath: /etc/frr_reloader
         env:
         - name: FRR_CONFIG_FILE
           value: /etc/frr_reloader/frr.conf
@@ -148,6 +148,13 @@ spec:
             mountPath: /etc/frr
           - name: reloader
             mountPath: /etc/frr_reloader
+      tolerations:
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/master
+        operator: Exists
+      - effect: NoSchedule
+        key: node-role.kubernetes.io/control-plane
+        operator: Exists
       volumes:
         - name: frr-sockets
           emptyDir: {}
@@ -190,6 +197,3 @@ spec:
       terminationGracePeriodSeconds: 10
       shareProcessNamespace: true
       hostNetwork: true
-
-
-

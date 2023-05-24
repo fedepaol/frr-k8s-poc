@@ -66,6 +66,8 @@ spec:
                           asn:
                             format: int32
                             type: integer
+                          ebgpMultiHop:
+                            type: boolean
                           passwd:
                             type: string
                           port:
